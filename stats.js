@@ -4,7 +4,7 @@
  */
 class Stats {
     constructor() {
-        this.startTime = Date.now();
+        this.startTime = performance.now();
         this.prevTime = this.startTime;
         this.frames = 0;
         this.mode = 0; // 0: FPS, 1: MS, 2: MEM
@@ -40,11 +40,11 @@ class Stats {
         this.frames = 0;
 
         // Min/Max tracking
-        this.msMin = 1000;
+        this.msMin = Infinity;
         this.msMax = 0;
-        this.fpsMin = 1000;
+        this.fpsMin = Infinity;
         this.fpsMax = 0;
-        this.memMin = 1000;
+        this.memMin = Infinity;
         this.memMax = 0;
     }
 
@@ -70,10 +70,10 @@ class Stats {
      */
     update() {
         this.frames++;
-        const time = Date.now();
+        const time = performance.now();
 
         // Calculate MS (delta time)
-        const ms = time - this.prevTime;
+        const ms = Math.round(time - this.prevTime);
         this.msMin = Math.min(this.msMin, ms);
         this.msMax = Math.max(this.msMax, ms);
 
@@ -112,7 +112,7 @@ class Panel {
         this.name = name;
         this.fg = fg;
         this.bg = bg;
-        this.PR = Math.round(window.devicePixelRatio || 1);
+        this.PR = Math.max(1, Math.round(window.devicePixelRatio || 1));
 
         this.WIDTH = 74 * this.PR;
         this.HEIGHT = 30 * this.PR;
@@ -129,7 +129,7 @@ class Panel {
 
         // Text Label
         this.text = document.createElement('div');
-        this.text.style.cssText = 'font-family:Helvetica,Arial,sans-serif;font-size:' + (9 * this.PR) + 'px;font-weight:bold;line-height:' + (15 * this.PR) + 'px;color:' + fg;
+        this.text.style.cssText = 'font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px;color:' + fg;
         this.text.innerHTML = name;
         this.dom.appendChild(this.text);
 
@@ -152,14 +152,13 @@ class Panel {
         // Update Text
         this.text.innerHTML = `${labelOne} <span style="font-weight:normal">${labelTwo}</span>`;
 
-        // Update Graph (Pixel Shift)
-        const minGraph = Math.min(30, 30 - (value / maxValue) * 30);
-
         // Original pixel shifting logic from stats.js r6
         // We shift the image data left by 1 pixel (actually 1 column)
         const data = this.imageData.data;
         const width = this.GRAPH_WIDTH;
         const height = this.GRAPH_HEIGHT;
+        const fraction = Math.max(0, Math.min(1, value / maxValue));
+        const minGraph = Math.round(height * (1 - fraction));
 
         // Shift existing pixels left
         for (let y = 0; y < height; y++) {
