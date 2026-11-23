@@ -20,7 +20,3 @@ On phones and tablets, the on-screen buttons also let you pause, resume, and end
 ## Standalone assets
 
 `stats.js` is an optional performance monitor. To use it on another page, load it as a classic script, create `new Stats()`, append its `domElement`, and call `update()` once per animation frame. `texture.jpg` is an optional background image that can be referenced from CSS with `url(texture.jpg)`. The game page uses its own CSS and does not load either asset.
-
-## Upstream and license
-
-The original project has a [demo](https://jakesgordon.com/games/tetris/), [design article](https://jakesgordon.com/writing/javascript-tetris/), and [source repository](https://github.com/jakesgordon/javascript-tetris). The project code uses the [MIT license](LICENSE). The bundled Bungee font uses the [SIL Open Font License](assets/bungee-OFL.txt).
